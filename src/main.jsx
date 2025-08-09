@@ -1,10 +1,13 @@
+// Archivo principal con los módulos de Venta e Inversión
 const { useState } = React;
 
+// Componente raíz que controla la navegación entre módulos
 function App() {
   const [module, setModule] = useState('venta');
   const [capitalDisponible, setCapitalDisponible] = useState(0);
   const [netoVenta, setNetoVenta] = useState(0);
 
+  // Guarda el neto de la venta para usarlo en el módulo de inversión
   const handleNeto = (valor) => {
     setNetoVenta(valor);
     setCapitalDisponible(valor);
@@ -25,6 +28,7 @@ function App() {
   );
 }
 
+// Calculadora de venta de vivienda. Devuelve el dinero neto tras la operación.
 function VentaCalculator({ onNeto }) {
   const [precioVenta, setPrecioVenta] = useState(300000);
   const [precioCompra, setPrecioCompra] = useState(200000);
@@ -43,6 +47,7 @@ function VentaCalculator({ onNeto }) {
   const plusvalia = Math.max(precioVenta - precioCompra, 0);
   const plusvaliaMunicipal = plusvalia * (gastos.plusvaliaMunicipal / 100);
 
+  // Calcula el impuesto sobre la renta por ganancia patrimonial según tramos
   function calcIRPF(gain) {
     let restante = gain;
     let impuesto = 0;
@@ -70,10 +75,12 @@ function VentaCalculator({ onNeto }) {
   const totalGastos = plusvaliaMunicipal + impuestoRenta + comision + notaria + registro + gestoria + otros + hipotecaPendiente;
   const neto = precioVenta - totalGastos;
 
+  // Actualiza el neto calculado al cambiar cualquier dato
   React.useEffect(() => {
     onNeto(neto);
   }, [neto]);
 
+  // Actualiza porcentajes de gasto de forma dinámica
   const handleGastoChange = (campo, valor) => {
     setGastos(prev => ({ ...prev, [campo]: parseFloat(valor) }));
   };
@@ -126,9 +133,11 @@ function VentaCalculator({ onNeto }) {
   );
 }
 
+// Simulador de inversión para múltiples propiedades
 function InversionSimulator({ capitalDisponible, setCapitalDisponible }) {
   const [propiedades, setPropiedades] = useState([]);
 
+  // Añade una nueva propiedad con valores por defecto
   const addPropiedad = () => {
     setPropiedades(prev => [...prev, {
       id: Date.now(),
@@ -145,14 +154,17 @@ function InversionSimulator({ capitalDisponible, setCapitalDisponible }) {
     }]);
   };
 
+  // Elimina una propiedad del listado
   const removePropiedad = (id) => {
     setPropiedades(prev => prev.filter(p=>p.id!==id));
   };
 
+  // Actualiza un campo específico de una propiedad
   const handleChange = (id, campo, valor) => {
     setPropiedades(prev => prev.map(p => p.id===id?{...p,[campo]:parseFloat(valor)||0}:p));
   };
 
+  // Obtiene métricas financieras para una propiedad
   const calcular = (p) => {
     const entrada = p.precioCompra * (p.entradaPorcentaje/100);
     const hipoteca = p.precioCompra - entrada;
@@ -168,6 +180,7 @@ function InversionSimulator({ capitalDisponible, setCapitalDisponible }) {
     return { entrada, hipoteca, cuota, ingresoBruto, ingresoNeto, cashflow, roi, rentabilidad };
   };
 
+  // Acumula métricas globales del conjunto de propiedades
   const resumen = propiedades.reduce((acc,p)=>{
     const r = calcular(p);
     acc.capitalUsado += r.entrada + (p.precioCompra*(p.gastosCompra/100)) + p.gastosReforma;
@@ -260,4 +273,5 @@ function InversionSimulator({ capitalDisponible, setCapitalDisponible }) {
   );
 }
 
+// Monta la aplicación en el DOM
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);

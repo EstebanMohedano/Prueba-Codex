@@ -1,16 +1,20 @@
 <!DOCTYPE html>
+<!-- Archivo HTML principal que carga React, ReactDOM, Babel y Tailwind desde CDNs -->
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculadora Inmobiliaria</title>
+    <!-- Librerías externas para estilos y React -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
   <body class="bg-gray-100 text-gray-900">
+    <!-- Punto de montaje de la aplicación React -->
     <div id="root"></div>
+    <!-- Carga del código JSX principal -->
     <script type="text/babel" src="./src/main.jsx"></script>
   </body>
 </html>
